@@ -32,7 +32,7 @@ Follow these steps to deploy the component to your organization.
 
 4. ### Add the Component to Your Page
 
-    Navigate to a page inside your organization to where you want to add the component to.
+    Navigate to a page inside your organization where you want to add the component to.
 
     Click the gear icon (cogwheel) on the top right and select `Edit Page` to access the Lightning App Builder for the page.
 
@@ -40,7 +40,7 @@ Follow these steps to deploy the component to your organization.
 
     When the builder loads, search for a custom component called `recentActivityFeed`.
 
-    NOTE: Loading the custom component list might take a second.
+    NOTE: Loading the custom component list might take a moment.
 
     ![Preview of the recentActivityFeed custom component highlighted in the component list.](images/custom_component_search_preview.png)
 
