@@ -1,4 +1,4 @@
-import { LightningElement, wire } from 'lwc';
+import { LightningElement } from 'lwc';
 import getRecentActivities from '@salesforce/apex/RecentActivityController.getRecentActivities';
 
 export default class RecentActivityFeed extends LightningElement {
@@ -6,32 +6,95 @@ export default class RecentActivityFeed extends LightningElement {
     error;
     isLoading = true;
 
-    @wire(getRecentActivities)
-    wiredActivities({ error, data }) {
-        this.isLoading = false;
-        if (data) {
-            this.activities = data.map(activity => {
-                return {
-                    ...activity,
-                    iconName: this.getIconForObjectType(activity.ObjectType),
-                    statusBadgeClass: this.getBadgeClass(activity.Status, activity.ObjectType),
-                    timeAgo: this.getTimeAgo(activity.LastModifiedDate),
-                    formattedAmount: this.formatCurrency(activity.Amount),
-                    formattedCloseDate: this.formatDate(activity.CloseDate),
-                    recordLink: `/${activity.Id}`,
-                    displayType: activity.Type || activity.ObjectType,
-                    Status: activity.Status || activity.ObjectType,
-                    // Show different details based on object type
-                    isOpportunity: activity.ObjectType === 'Opportunity',
-                    isLead: activity.ObjectType === 'Lead',
-                    isAccount: activity.ObjectType === 'Account',
-                };
+    // Filter states (all enabled by default)
+    showOpportunities = true;
+    showLeads = true;
+    showAccounts = true;
+    recordLimit = 10;
+
+    recordLimitOptions = [
+        { label: '5', value: '5' },
+        { label: '10', value: '10' },
+        { label: '25', value: '25' },
+        { label: '50', value: '50' },
+        { label: '100', value: '100' }
+    ];
+
+    connectedCallback() {
+        this.loadActivities();
+    }
+
+    loadActivities() {
+        this.isLoading = true;
+        this.error = undefined;
+
+        getRecentActivities({
+            includeOpportunities: this.showOpportunities,
+            includeLeads: this.showLeads,
+            includeAccounts: this.showAccounts,
+            recordLimit: this.recordLimit
+        })
+            .then(data => {
+                this.activities = data.map(activity => {
+                    return {
+                        ...activity,
+                        iconName: this.getIconForObjectType(activity.ObjectType),
+                        statusBadgeClass: this.getBadgeClass(activity.Status, activity.ObjectType),
+                        timeAgo: this.getTimeAgo(activity.LastModifiedDate),
+                        formattedAmount: this.formatCurrency(activity.Amount),
+                        formattedCloseDate: this.formatDate(activity.CloseDate),
+                        recordLink: `/${activity.Id}`,
+                        displayType: activity.Type || activity.ObjectType,
+                        Status: activity.Status || activity.ObjectType,
+                        // Show different details based on object type
+                        isOpportunity: activity.ObjectType === 'Opportunity',
+                        isLead: activity.ObjectType === 'Lead',
+                        isAccount: activity.ObjectType === 'Account',
+                    };
+                });
+                this.isLoading = false;
+            })
+            .catch(error => {
+                this.error = 'Error loading activities: ' + (error.body?.message || error.message);
+                this.activities = [];
+                this.isLoading = false;
             });
-            this.error = undefined;
-        } else if (error) {
-            this.error = 'Error loading activities: ' + (error.body?.message || error.message);
-            this.activities = [];
-        }
+    }
+
+    handleToggleOpportunities() {
+        this.showOpportunities = !this.showOpportunities;
+        this.loadActivities();
+    }
+
+    handleToggleLeads() {
+        this.showLeads = !this.showLeads;
+        this.loadActivities();
+    }
+
+    handleToggleAccounts() {
+        this.showAccounts = !this.showAccounts;
+        this.loadActivities();
+    }
+
+    get opportunitiesVariant() {
+        return this.showOpportunities ? 'brand' : 'neutral';
+    }
+
+    get leadsVariant() {
+        return this.showLeads ? 'brand' : 'neutral';
+    }
+
+    get accountsVariant() {
+        return this.showAccounts ? 'brand' : 'neutral';
+    }
+
+    get recordLimitValue() {
+        return String(this.recordLimit);
+    }
+
+    handleRecordLimitChange(event) {
+        this.recordLimit = parseInt(event.detail.value, 10);
+        this.loadActivities();
     }
 
     get hasActivities() {

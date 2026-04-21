@@ -1,5 +1,36 @@
 <template>
     <lightning-card title="Recent Activity" icon-name="standard:feed">
+        <!-- Filter Buttons -->
+        <div class="slds-p-horizontal_small slds-p-top_small">
+            <div class="filter-buttons">
+                <lightning-button
+                    label="Opportunities"
+                    variant={opportunitiesVariant}
+                    onclick={handleToggleOpportunities}
+                    class="filter-button">
+                </lightning-button>
+                <lightning-button
+                    label="Leads"
+                    variant={leadsVariant}
+                    onclick={handleToggleLeads}
+                    class="filter-button">
+                </lightning-button>
+                <lightning-button
+                    label="Accounts"
+                    variant={accountsVariant}
+                    onclick={handleToggleAccounts}
+                    class="filter-button">
+                </lightning-button>
+                <lightning-combobox
+                    label="Records to Show"
+                    value={recordLimitValue}
+                    options={recordLimitOptions}
+                    onchange={handleRecordLimitChange}
+                    class="record-limit-input">
+                </lightning-combobox>
+            </div>
+        </div>
+
         <div class="slds-p-horizontal_small">
             <template if:true={isLoading}>
                 <div class="slds-text-align_center slds-p-vertical_medium">

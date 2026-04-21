@@ -21,83 +21,101 @@ public with sharing class RecentActivityController {
         }
     }
 
-    @AuraEnabled(cacheable=true)
-    public static List<ActivityRecord> getRecentActivities() {
+    @AuraEnabled
+    public static List<ActivityRecord> getRecentActivities(
+        Boolean includeOpportunities,
+        Boolean includeLeads,
+        Boolean includeAccounts,
+        Integer recordLimit
+    ) {
         try {
             List<ActivityRecord> activities = new List<ActivityRecord>();
+            Integer recordsPerType = recordLimit != null ? recordLimit : 10;
 
             // Get recent Opportunities
-            List<Opportunity> opps = [
-                SELECT Id, Name, Type, StageName, Amount, CloseDate,
-                       LastModifiedDate, Account.Name
-                FROM Opportunity
-                WHERE LastModifiedDate = LAST_N_DAYS:30
-                ORDER BY LastModifiedDate DESC
-                LIMIT 5
-            ];
+            if (includeOpportunities) {
+                List<Opportunity> opps = [
+                    SELECT Id, Name, Type, StageName, Amount, CloseDate,
+                           LastModifiedDate, Account.Name
+                    FROM Opportunity
+                    WHERE LastModifiedDate = LAST_N_DAYS:30
+                    ORDER BY LastModifiedDate DESC
+                    LIMIT :recordsPerType
+                ];
 
-            for (Opportunity opp : opps) {
-                ActivityRecord activity = new ActivityRecord();
-                activity.Id = opp.Id;
-                activity.Name = opp.Name;
-                activity.Type = opp.Type;
-                activity.Status = opp.StageName;
-                activity.ObjectType = 'Opportunity';
-                activity.LastModifiedDate = opp.LastModifiedDate;
-                activity.RelatedName = opp.Account?.Name;
-                activity.Amount = opp.Amount;
-                activity.CloseDate = opp.CloseDate;
-                activities.add(activity);
+                for (Opportunity opp : opps) {
+                    ActivityRecord activity = new ActivityRecord();
+                    activity.Id = opp.Id;
+                    activity.Name = opp.Name;
+                    activity.Type = opp.Type;
+                    activity.Status = opp.StageName;
+                    activity.ObjectType = 'Opportunity';
+                    activity.LastModifiedDate = opp.LastModifiedDate;
+                    activity.RelatedName = opp.Account?.Name;
+                    activity.Amount = opp.Amount;
+                    activity.CloseDate = opp.CloseDate;
+                    activities.add(activity);
+                }
             }
 
             // Get recent Leads
-            List<Lead> leads = [
-                SELECT Id, Name, Company, Status, Email, Phone,
-                       LastModifiedDate
-                FROM Lead
-                WHERE LastModifiedDate = LAST_N_DAYS:30
-                ORDER BY LastModifiedDate DESC
-                LIMIT 5
-            ];
+            if (includeLeads) {
+                List<Lead> leads = [
+                    SELECT Id, Name, Company, Status, Email, Phone,
+                           LastModifiedDate
+                    FROM Lead
+                    WHERE LastModifiedDate = LAST_N_DAYS:30
+                    ORDER BY LastModifiedDate DESC
+                    LIMIT :recordsPerType
+                ];
 
-            for (Lead lead : leads) {
-                ActivityRecord activity = new ActivityRecord();
-                activity.Id = lead.Id;
-                activity.Name = lead.Name;
-                activity.Type = lead.Company;
-                activity.Status = lead.Status;
-                activity.ObjectType = 'Lead';
-                activity.LastModifiedDate = lead.LastModifiedDate;
-                activity.Email = lead.Email;
-                activity.Phone = lead.Phone;
-                activities.add(activity);
+                for (Lead lead : leads) {
+                    ActivityRecord activity = new ActivityRecord();
+                    activity.Id = lead.Id;
+                    activity.Name = lead.Name;
+                    activity.Type = lead.Company;
+                    activity.Status = lead.Status;
+                    activity.ObjectType = 'Lead';
+                    activity.LastModifiedDate = lead.LastModifiedDate;
+                    activity.Email = lead.Email;
+                    activity.Phone = lead.Phone;
+                    activities.add(activity);
+                }
             }
 
             // Get recent Accounts
-            List<Account> accounts = [
-                SELECT Id, Name, Type, Industry, Phone,
-                       LastModifiedDate
-                FROM Account
-                WHERE LastModifiedDate = LAST_N_DAYS:30
-                ORDER BY LastModifiedDate DESC
-                LIMIT 5
-            ];
+            if (includeAccounts) {
+                List<Account> accounts = [
+                    SELECT Id, Name, Type, Industry, Phone,
+                           LastModifiedDate
+                    FROM Account
+                    WHERE LastModifiedDate = LAST_N_DAYS:30
+                    ORDER BY LastModifiedDate DESC
+                    LIMIT :recordsPerType
+                ];
 
-            for (Account acc : accounts) {
-                ActivityRecord activity = new ActivityRecord();
-                activity.Id = acc.Id;
-                activity.Name = acc.Name;
-                activity.Type = acc.Type;
-                activity.Status = acc.Industry;
-                activity.ObjectType = 'Account';
-                activity.LastModifiedDate = acc.LastModifiedDate;
-                activity.Phone = acc.Phone;
-                activities.add(activity);
+                for (Account acc : accounts) {
+                    ActivityRecord activity = new ActivityRecord();
+                    activity.Id = acc.Id;
+                    activity.Name = acc.Name;
+                    activity.Type = acc.Type;
+                    activity.Status = acc.Industry;
+                    activity.ObjectType = 'Account';
+                    activity.LastModifiedDate = acc.LastModifiedDate;
+                    activity.Phone = acc.Phone;
+                    activities.add(activity);
+                }
             }
 
-            // Sort all activities by LastModifiedDate
+            // Sort all activities by LastModifiedDate and limit to recordLimit
             activities.sort();
-            return activities;
+
+            List<ActivityRecord> result = new List<ActivityRecord>();
+            for (Integer i = 0; i < Math.min(activities.size(), recordsPerType); i++) {
+                result.add(activities[i]);
+            }
+
+            return result;
 
         } catch (Exception e) {
             throw new AuraHandledException('Error retrieving activities: ' + e.getMessage());

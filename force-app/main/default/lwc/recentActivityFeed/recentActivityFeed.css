@@ -2,6 +2,23 @@
     --badge-text-color: #ffffff;
 }
 
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.filter-button {
+    font-size: 13px;
+}
+
+.record-limit-input {
+    width: 150px;
+    margin-left: auto;
+}
+
 .activity-feed {
     display: flex;
     flex-direction: column;
