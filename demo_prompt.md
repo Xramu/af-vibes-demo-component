@@ -1,0 +1,1 @@
+Edit the JavaScript and HTML of the @/force-app/main/default/lwc/recentActivityFeed component to add the activity's last modified date to the bottom of each activity card.
