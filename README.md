@@ -1,18 +1,47 @@
-# Salesforce DX Project: Next Steps
+# Recent Activity Feed Demo Component
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+A quick demo component that shows any recently modified Opportunities, Leads or Accounts inside the Salesforce organization.
 
-## How Do You Plan to Deploy Your Changes?
+Supports filtering the activity based on the records' object types.
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+![Preview of what the component looks like](images/component_preview.png)
 
-## Configure Your Salesforce DX Project
+# VS Code for Salesforce DX Setup
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+[Resources for installing VSCode for Salesforce DX projects](https://developer.salesforce.com/docs/platform/sfvscode-extensions/overview)
 
-## Read All About It
+# Deployment
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+This component uses the Opportunity, Lead and Account objects from Sales Cloud.
+
+Follow these steps to deploy the component to your organization.
+
+1. ### Clone the Repository
+
+    Use git to clone the repository or download it and open it in Visual Studio Code.
+
+2. ### Connect to Your Organization
+
+    Press `Command + Shift + P` on Mac or `Control + Shift + P` on Windows to bring up the Command Palette. Search for the command `SFDX: Authorize an Org` and run it.
+
+3. ### Deploy the Component
+
+    Right-click the `force-app` folder and select `SFDX: Deploy This Source to Org` to deploy the component and the Apex class to your org.
+
+    ![Preview of the "Deploy This Source to Org" selection.](images/deploy_this_preview.png)
+
+4. ### Add the Component to Your Page
+
+    Navigate to a page inside your organization to where you want to add the component to.
+
+    Click the gear icon (cogwheel) on the top right and select `Edit Page` to access the Lightning App Builder for the page.
+
+    ![Preview of the Edit Page button inside the gear icon menu.](images/edit_page_preview.png)
+
+    When the builder loads, search for a custom component called `recentActivityFeed`.
+
+    NOTE: Loading the custom component list might take a second.
+
+    ![Preview of the recentActivityFeed custom component highlighted in the component list.](images/custom_component_search_preview.png)
+
+    Drag and drop the component into the page and click `Save`
