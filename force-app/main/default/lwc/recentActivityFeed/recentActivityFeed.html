@@ -1,0 +1,98 @@
+<template>
+    <lightning-card title="Recent Activity" icon-name="standard:feed">
+        <div class="slds-p-horizontal_small">
+            <template if:true={isLoading}>
+                <div class="slds-text-align_center slds-p-vertical_medium">
+                    <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <template if:true={error}>
+                <div class="slds-text-color_error slds-p-around_small">
+                    {error}
+                </div>
+            </template>
+
+            <template if:true={hasActivities}>
+                <div class="activity-feed">
+                    <template for:each={activities} for:item="activity">
+                        <div key={activity.Id} class="activity-card">
+                            <div class="activity-header">
+                                <lightning-icon
+                                    icon-name={activity.iconName}
+                                    size="small"
+                                    class="activity-icon">
+                                </lightning-icon>
+                                <div class="activity-title-section">
+                                    <a href={activity.recordLink} class="activity-title">{activity.Name}</a>
+                                    <div class="activity-meta">
+                                        <span class="activity-type">{activity.displayType}</span>
+                                        <span class="activity-separator">•</span>
+                                        <span class="activity-time">{activity.timeAgo}</span>
+                                    </div>
+                                </div>
+                                <lightning-badge
+                                    label={activity.Status}
+                                    class={activity.statusBadgeClass}>
+                                </lightning-badge>
+                            </div>
+                            <div class="activity-details">
+                                <!-- Opportunity details -->
+                                <template if:true={activity.isOpportunity}>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Amount:</span>
+                                        <span class="detail-value">{activity.formattedAmount}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-label">Close Date:</span>
+                                        <span class="detail-value">{activity.formattedCloseDate}</span>
+                                    </div>
+                                    <template if:true={activity.RelatedName}>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Account:</span>
+                                            <span class="detail-value">{activity.RelatedName}</span>
+                                        </div>
+                                    </template>
+                                </template>
+
+                                <!-- Lead details -->
+                                <template if:true={activity.isLead}>
+                                    <template if:true={activity.Email}>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Email:</span>
+                                            <span class="detail-value">{activity.Email}</span>
+                                        </div>
+                                    </template>
+                                    <template if:true={activity.Phone}>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Phone:</span>
+                                            <span class="detail-value">{activity.Phone}</span>
+                                        </div>
+                                    </template>
+                                </template>
+
+                                <!-- Account details -->
+                                <template if:true={activity.isAccount}>
+                                    <template if:true={activity.Phone}>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Phone:</span>
+                                            <span class="detail-value">{activity.Phone}</span>
+                                        </div>
+                                    </template>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <template if:false={hasActivities}>
+                <template if:false={isLoading}>
+                    <div class="slds-text-align_center slds-p-vertical_medium slds-text-color_weak">
+                        No recent activities found
+                    </div>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>
