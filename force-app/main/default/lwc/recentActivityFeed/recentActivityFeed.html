@@ -45,8 +45,9 @@
             </template>
 
             <template if:true={hasActivities}>
-                <div class="activity-feed">
-                    <template for:each={activities} for:item="activity">
+                <div class="activity-feed-container">
+                    <div class="activity-feed">
+                        <template for:each={activities} for:item="activity">
                         <div key={activity.Id} class="activity-card">
                             <div class="activity-header">
                                 <lightning-icon
@@ -115,6 +116,7 @@
                         </div>
                     </template>
                 </div>
+            </div>
             </template>
 
             <template if:false={hasActivities}>

@@ -19,11 +19,57 @@
     margin-left: auto;
 }
 
+.activity-feed-container {
+    position: relative;
+}
+
+.activity-feed-container::before,
+.activity-feed-container::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 8px;
+    height: 24px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.activity-feed-container::before {
+    top: 0;
+    background: linear-gradient(to bottom, white, transparent);
+}
+
+.activity-feed-container::after {
+    bottom: 0;
+    background: linear-gradient(to top, white, transparent);
+}
+
 .activity-feed {
     display: flex;
     flex-direction: column;
     gap: 12px;
     padding: 12px 0;
+    max-height: 930px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.activity-feed::-webkit-scrollbar {
+    width: 8px;
+}
+
+.activity-feed::-webkit-scrollbar-track {
+    background: #f3f3f3;
+    border-radius: 4px;
+}
+
+.activity-feed::-webkit-scrollbar-thumb {
+    background: #c9c7c5;
+    border-radius: 4px;
+}
+
+.activity-feed::-webkit-scrollbar-thumb:hover {
+    background: #706e6b;
 }
 
 .activity-card {
